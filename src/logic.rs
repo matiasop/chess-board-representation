@@ -1,3 +1,5 @@
+use crate::debugging::*;
+
 #[derive(Copy, Clone, Debug)]
 pub enum PieceType {
     Pawn,
@@ -14,37 +16,26 @@ pub struct Piece {
     pub color: bool,
 }
 
+pub struct Pos {
+    pub x: usize,
+    pub y: usize,
+}
+
 #[derive(Copy, Clone)]
 pub struct Square {
     pub piece: Option<Piece>,
 }
 
-pub fn print_board(board: &[[Square; 8]; 8]) {
-    for col in 0..8 {
-        for row in 0..8 {
-            match board[col][row].piece {
-                Some(p) => match p.color {
-                    true => match p.piece_type {
-                        PieceType::Pawn => print!("P"),
-                        PieceType::Rook => print!("R"),
-                        PieceType::Bishop => print!("B"),
-                        PieceType::Knight => print!("N"),
-                        PieceType::Queen => print!("Q"),
-                        PieceType::King => print!("K"),
-                    },
-                    false => match p.piece_type {
-                        PieceType::Pawn => print!("p"),
-                        PieceType::Rook => print!("r"),
-                        PieceType::Bishop => print!("b"),
-                        PieceType::Knight => print!("n"),
-                        PieceType::Queen => print!("q"),
-                        PieceType::King => print!("k"),
-                    },
-                },
-                None => print!("-"),
-            }
+impl Square {
+    fn get_piece(&self) -> Piece {
+        match self.piece {
+            Some(p) => p,
+            None => panic!("Error: could not get piece"),
         }
-        println!();
+    }
+    
+    fn remove_piece(&mut self) {
+        self.piece = None;
     }
 }
 
@@ -97,4 +88,22 @@ pub fn populate_board() -> [[Square; 8]; 8] {
         }
     }
     board
+}
+
+pub fn move_piece(board: &mut [[Square; 8]; 8], from: Pos, to: Pos) {
+    let mut initial_square = board[from.x][from.y];
+    let mut final_square = board[to.x][to.y];
+
+    // Get piece
+    let piece = initial_square.get_piece();
+
+    // Move piece to final position
+    final_square.piece = Some(piece);
+
+    // Remove piece original position
+    initial_square.remove_piece();
+
+    // Make changes in the board
+    board[from.x][from.y] = initial_square;
+    board[to.x][to.y] = final_square;
 }
