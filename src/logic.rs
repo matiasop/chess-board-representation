@@ -1,25 +1,4 @@
-use crate::debugging::*;
-
-#[derive(Copy, Clone, Debug)]
-pub enum PieceType {
-    Pawn,
-    Knight,
-    Bishop,
-    Rook,
-    Queen,
-    King,
-}
-
-#[derive(Copy, Clone)]
-pub struct Piece {
-    pub piece_type: PieceType,
-    pub color: bool,
-}
-
-pub struct Pos {
-    pub x: usize,
-    pub y: usize,
-}
+use crate::structs::{PieceType, Piece, Pos};
 
 #[derive(Copy, Clone)]
 pub struct Square {
@@ -39,9 +18,19 @@ impl Square {
     }
 }
 
-pub fn populate_board() -> [[Square; 8]; 8] {
+pub struct Game {
+    pub board: [[Square; 8]; 8],
+    pub white_pieces: [Piece; 16],
+    pub black_pieces: [Piece; 16],
+}
+
+pub fn initialize_game() -> Game {
     // Initialize empty board
     let mut board: [[Square; 8]; 8] = [[Square { piece: None }; 8]; 8];
+
+    // Initialize empy arrays of pieces
+    let mut white_pieces: [Piece; 16] = [Piece {piece_type: PieceType::Pawn, color: true, alive: false, position: Pos { x: 100, y: 100}}; 16];
+    let mut black_pieces: [Piece; 16] = [Piece {piece_type: PieceType::Pawn, color: true, alive: false, position: Pos { x: 100, y: 100}}; 16];
 
     // Populate board
     for i in 0..8 {
@@ -54,40 +43,64 @@ pub fn populate_board() -> [[Square; 8]; 8] {
                 (_, 1) | (_, 6) => Some(Piece {
                     piece_type: PieceType::Pawn,
                     color: color,
+                    alive: true,
+                    position: Pos {x: i, y: j},
                 }),
                 // Rooks
                 (0, 0) | (7, 0) | (0, 7) | (7, 7) => Some(Piece {
                     piece_type: PieceType::Rook,
                     color: color,
+                    alive: true,
+                    position: Pos {x: i, y: j},
                 }),
                 // Bishops
                 (1, 0) | (6, 0) | (1, 7) | (6, 7) => Some(Piece {
                     piece_type: PieceType::Bishop,
                     color: color,
+                    alive: true,
+                    position: Pos {x: i, y: j},
                 }),
                 // Kinghts
                 (2, 0) | (5, 0) | (2, 7) | (5, 7) => Some(Piece {
                     piece_type: PieceType::Knight,
                     color: color,
+                    alive: true,
+                    position: Pos {x: i, y: j},
                 }),
                 // Queens
                 (3, 0) | (3, 7) => Some(Piece {
                     piece_type: PieceType::Queen,
                     color: color,
+                    alive: true,
+                    position: Pos {x: i, y: j},
                 }),
                 // King
                 (4, 0) | (4, 7) => Some(Piece {
                     piece_type: PieceType::King,
                     color: color,
+                    alive: true,
+                    position: Pos {x: i, y: j},
                 }),
                 _ => None,
             };
 
             // Fill Board
             board[i][j] = Square { piece: piece };
+            
+            // Fill array of pieces
+            match piece {
+                Some(_p) => {
+                    if j <= 2 {
+                        white_pieces[i + 8*j] = piece.unwrap();
+                    } else if j >= 6 {
+                        black_pieces[i + 8*(7 - j)] = piece.unwrap();
+                    }
+                },
+                None => (),
+            }
         }
     }
-    board
+    return Game {board, white_pieces, black_pieces}
 }
 
 pub fn move_piece(board: &mut [[Square; 8]; 8], from: Pos, to: Pos) {

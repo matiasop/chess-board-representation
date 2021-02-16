@@ -1,6 +1,9 @@
 use crate::logic::*;
+use crate::structs::*;
 
-pub fn print_board(board: &[[Square; 8]; 8]) {
+pub fn print_board(game: &Game) {
+    let board = game.board;
+
     for col in 0..8 {
         for row in 0..8 {
             match board[col][row].piece {
@@ -26,6 +29,23 @@ pub fn print_board(board: &[[Square; 8]; 8]) {
             }
         }
         println!();
+    }
+}
+
+pub fn print_pieces_arrays(game: &Game) {
+    println!("White Pieces");
+    print_pieces_array(&game.white_pieces);
+    println!();
+    
+    println!("Black Pieces");
+    print_pieces_array(&game.black_pieces);
+    println!();
+}
+
+fn print_pieces_array(array: &[Piece; 16]) {
+    for i in 0..16 {
+        let piece = array[i];
+        println!("Type: {:?}, White?: {}, Alive?: {}, X: {}, Y: {}", piece.piece_type, piece.color, piece.alive, piece.position.x, piece.position.y);
     }
 }
 
