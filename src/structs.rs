@@ -17,7 +17,7 @@ pub struct Piece {
     pub position: Pos,
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub struct Pos {
     pub x: usize,
     pub y: usize,

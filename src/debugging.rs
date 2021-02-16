@@ -36,7 +36,7 @@ pub fn print_pieces_arrays(game: &Game) {
     println!("White Pieces");
     print_pieces_array(&game.white_pieces);
     println!();
-    
+
     println!("Black Pieces");
     print_pieces_array(&game.black_pieces);
     println!();
@@ -45,7 +45,10 @@ pub fn print_pieces_arrays(game: &Game) {
 fn print_pieces_array(array: &[Piece; 16]) {
     for i in 0..16 {
         let piece = array[i];
-        println!("Type: {:?}, White?: {}, Alive?: {}, X: {}, Y: {}", piece.piece_type, piece.color, piece.alive, piece.position.x, piece.position.y);
+        println!(
+            "Type: {:?}, White?: {}, Alive?: {}, X: {}, Y: {}",
+            piece.piece_type, piece.color, piece.alive, piece.position.x, piece.position.y
+        );
     }
 }
 
