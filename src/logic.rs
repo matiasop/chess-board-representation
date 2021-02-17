@@ -46,7 +46,7 @@ impl Game {
 
         // Find piece in piece array
         let array_piece;
-        let piece_index = self.find_piece_index(from, true);
+        let piece_index = self.find_piece_index(from, is_white);
         if is_white {
             array_piece = self.white_pieces[piece_index];
             self.white_pieces[piece_index] = self.change_piece_position(array_piece, to);
@@ -107,7 +107,7 @@ impl Game {
         // Find and return possible moves for the piece
         match piece.piece_type {
             PieceType::Pawn => check_pawn_moves(&self, &piece),
-            PieceType::Rook => check_pawn_moves(&self, &piece),
+            PieceType::Rook => check_rook_moves(&self, &piece),
             PieceType::Bishop => check_pawn_moves(&self, &piece),
             PieceType::Knight => check_pawn_moves(&self, &piece),
             PieceType::Queen => check_pawn_moves(&self, &piece),

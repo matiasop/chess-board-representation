@@ -30,8 +30,6 @@ pub fn make_pos(x: usize, y: usize) -> Pos {
 /// Returns a vector of positions with all the valid pawn moves
 pub fn check_pawn_moves(game: &Game, piece: &Piece) -> Vec<Pos> {
     let mut moves: Vec<Pos> = Vec::new();
-    // let check_if_no_piece: Vec<Pos> = Vec::new();
-    // let check_if_piece: Vec<Pos> = Vec::new();
 
     // White pawns advance in the positive 'j' direction
     // Black pawns advance in the negative 'j' direction
@@ -66,9 +64,58 @@ pub fn check_pawn_moves(game: &Game, piece: &Piece) -> Vec<Pos> {
             }
         }
     }
+
     // Check if there is an adversary piece in the pawn's forward diagonals
+    let (x_diag_left, y_diag_left) = (x_pos - 1, y_pos + increment);
+    let (x_diag_right, y_diag_right) = (x_pos + 1, y_pos + increment);
+    // Left diagonal
+    if valid_numbers(x_diag_left, y_diag_left) {
+        let left_diag_pos = make_pos(
+            x_diag_left.try_into().unwrap(),
+            y_diag_left.try_into().unwrap(),
+        );
+        if piece_in_pos(&game, left_diag_pos) {
+            moves.push(left_diag_pos);
+        }
+    }
+    // Right diagonal
+    if valid_numbers(x_diag_right, y_diag_right) {
+        let right_diag_pos = make_pos(
+            x_diag_right.try_into().unwrap(),
+            y_diag_right.try_into().unwrap(),
+        );
+        if piece_in_pos(&game, right_diag_pos) {
+            moves.push(right_diag_pos);
+        }
+    }
 
     // Check en passant
     println!("{:?}", moves);
+    moves
+}
+
+pub fn check_rook_moves(game: &Game, piece: &Piece) -> Vec<Pos> {
+    let mut moves: Vec<Pos> = Vec::new();
+
+    let x_pos: isize = piece.position.x.try_into().unwrap();
+    let y_pos: isize = piece.position.y.try_into().unwrap();
+
+    // Check in all four directions if there is a piece
+    for (inc_x, inc_y) in [(1, 0), (-1, 0), (0, 1), (0, -1)].iter() {
+        for i in 1..8 {
+            let (x_new_pos, y_new_pos) = (x_pos + inc_x * i, y_pos + inc_y * i);
+            if valid_numbers(x_new_pos, y_new_pos) {
+                let new_pos =
+                    make_pos(x_new_pos.try_into().unwrap(), y_new_pos.try_into().unwrap());
+                if !piece_in_pos(&game, new_pos) {
+                    moves.push(new_pos);
+                } else {
+                    break;
+                }
+            } else {
+                break;
+            }
+        }
+    }
     moves
 }
