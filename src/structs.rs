@@ -30,4 +30,3 @@ impl PartialEq for Pos {
         self.x == other.x && self.y == other.y
     }
 }
-

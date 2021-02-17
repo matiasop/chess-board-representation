@@ -23,7 +23,7 @@ fn valid_numbers(x: isize, y: isize) -> bool {
     0 <= x && x < 8 && 0 <= y && y < 8
 }
 
-fn make_pos(x: usize, y: usize) -> Pos {
+pub fn make_pos(x: usize, y: usize) -> Pos {
     Pos { x, y }
 }
 
