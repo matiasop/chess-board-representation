@@ -1,3 +1,5 @@
+use crate::debugging::*;
+use crate::moves::*;
 use crate::structs::{Piece, PieceType, Pos};
 
 #[derive(Copy, Clone)]
@@ -43,7 +45,7 @@ impl Game {
         self.board[to.x][to.y] = final_square;
 
         // Find piece in piece array
-        let mut array_piece;
+        let array_piece;
         let piece_index = self.find_piece_index(from, true);
         if is_white {
             array_piece = self.white_pieces[piece_index];
@@ -54,8 +56,9 @@ impl Game {
         }
     }
 
+    /// Returns the index of a piece found in piece_array
+    /// If no piece is found, then the program panics
     fn find_piece_index(&self, position: Pos, is_white: bool) -> usize {
-        // Returns the index of in piece_array where the piece is found
         let iterable;
         if is_white {
             iterable = self.white_pieces;
@@ -63,19 +66,53 @@ impl Game {
             iterable = self.black_pieces;
         }
 
-        let mut piece_index: usize = 0;
+        let mut piece_index: Option<usize> = None;
         for (index, piece) in iterable.iter().enumerate() {
             if piece.position.x == position.x && piece.position.y == position.y {
-                piece_index = index
+                piece_index = Some(index);
             }
         }
-        piece_index
+        match piece_index {
+            Some(index) => index,
+            None => panic!(
+                "Error: could not find piece of color {} in position {:?}",
+                is_white, position
+            ),
+        }
+    }
+
+    /// Finds a piece on the arrays and returns the piece
+    fn find_piece(&self, position: Pos, is_white: bool) -> Piece {
+        let piece: Piece;
+        let index = self.find_piece_index(position, is_white);
+        if is_white {
+            piece = self.white_pieces[index];
+        } else {
+            piece = self.black_pieces[index];
+        }
+        piece
     }
 
     fn change_piece_position(&mut self, mut piece: Piece, position: Pos) -> Piece {
         piece.position.x = position.x;
         piece.position.y = position.y;
         piece
+    }
+
+    /// Recieves a Pos, finds the piece in the board, returns a list of all possible moves for that piece
+    pub fn find_possible_moves(&self, position: Pos, is_white: bool) -> Vec<Pos> {
+        // Find piece
+        let piece = self.find_piece(position, is_white);
+
+        // Find and return possible moves for the piece
+        match piece.piece_type {
+            PieceType::Pawn => check_pawn_moves(&self, &piece),
+            PieceType::Rook => check_pawn_moves(&self, &piece),
+            PieceType::Bishop => check_pawn_moves(&self, &piece),
+            PieceType::Knight => check_pawn_moves(&self, &piece),
+            PieceType::Queen => check_pawn_moves(&self, &piece),
+            PieceType::King => check_pawn_moves(&self, &piece),
+        }
     }
 }
 

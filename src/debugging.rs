@@ -52,9 +52,13 @@ fn print_pieces_array(array: &[Piece; 16]) {
     }
 }
 
-pub fn print_piece_color(square: &Square) {
+pub fn print_square_color(square: &Square) {
     match square.piece {
         Some(p) => println!("{}", p.color),
         None => panic!("Error: could not print piece color"),
     }
+}
+
+pub fn print_piece_type(piece: &Piece) {
+    println!("Type: {:?}", piece.piece_type);
 }

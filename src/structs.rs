@@ -1,3 +1,5 @@
+use std::cmp::PartialEq;
+
 #[allow(dead_code)]
 #[derive(Copy, Clone, Debug)]
 pub enum PieceType {
@@ -21,4 +23,10 @@ pub struct Piece {
 pub struct Pos {
     pub x: usize,
     pub y: usize,
+}
+
+impl PartialEq for Pos {
+    fn eq(&self, other: &Self) -> bool {
+        self.x == other.x && self.y == other.y
+    }
 }
